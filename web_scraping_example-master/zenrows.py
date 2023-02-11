@@ -2,17 +2,22 @@ from celery import Celery
 import requests
 from bs4 import BeautifulSoup
 import hashlib
+import json
+
 
 app = Celery('tasks', broker_url='redis://127.0.0.1:6379/1')
-
 
 def initialize():
     print("initialize")
     domains = crawl()
+    # worker = app.Worker(concurrency=5)
+    # worker.start()
     dict = initialize_dictionary_domains(domains)
+    write_to_file(dict)
     print("hello")
 
 
+@app.task
 def initialize_dictionary_domains(domains):
     print("initialize_dictionary_domains")
     print()
@@ -25,7 +30,6 @@ def initialize_dictionary_domains(domains):
     return dictionary
 
 
-@app.task
 def crawl():
     print("crawl")
 
@@ -106,10 +110,14 @@ def create_domain_obj(url):
     return data
 
 
+def write_to_file(dictionary):
+    with open("websites_data.json", "w") as file:
+        json.dump(dictionary, file)
+
 
 if __name__ == '__main__':
+
     print('Starting scraping')
-    domain = "https://youtube.com"
     initialize()
     print('Finished scraping')
 

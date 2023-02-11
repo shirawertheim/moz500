@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import hashlib
 
-app = Celery('create_domain_obj', broker='redis://localhost:6379/0')
+app = Celery('tasks', broker_url='redis://127.0.0.1:6379/1')
 
 
 def initialize():
@@ -25,6 +25,7 @@ def initialize_dictionary_domains(domains):
     return dictionary
 
 
+@app.task
 def crawl():
     print("crawl")
 

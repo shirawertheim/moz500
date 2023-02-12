@@ -21,3 +21,10 @@ celery -A tasks worker -B -l INFO
 ```
 
 MIT License.
+
+
+
+
+
+
+brew services restart rabbitmq

@@ -39,7 +39,7 @@ def crawl():
     return domains
 
 
-# The function sends GET request to the url, and returns it content
+# The function sends GET request to the MOZ url, and returns it content
 def get_html(url, headers):
     try:
         response = requests.get(url, headers=headers)
@@ -50,8 +50,8 @@ def get_html(url, headers):
     return ''
 
 
-# the function extract from the html content from the correct tags the correct URLS.
-# the loop count depends on the NUMBER_OF_DOMAINS
+# The function extracts the html content through the tags the correct URLS.
+# The loop count depends on the NUMBER_OF_DOMAINS
 def extract_domains(soup):
     domains = []
     for i, tr in enumerate(soup.find_all("tr")):
@@ -67,7 +67,7 @@ def extract_domains(soup):
 # ******** part B - create object domains ********
 
 
-# loop that iterates all the domains, and for each one initialize an object with information about them
+# Loop that iterates all the domains, and for each domain initialize an object contains information about it.
 def initialize_list_domains(domains):
     print("initialize_list_domains:")
     result_list = []
@@ -80,8 +80,8 @@ def initialize_list_domains(domains):
     return result_list
 
 
+# Send GET request to the domain, and if it works (response of '200'),
 # The method returns an object that consist 3 parameters: title, links and favicon_hash.
-# Send GET request to the domain, and if it works (response of '200'), it fills the data dictionary.
 @app.task
 def create_domain_obj(url):
     data = {"title": "", "links": [], "favicon_hash": ""}
@@ -101,14 +101,15 @@ def create_domain_obj(url):
         data["favicon_hash"] = "Favicon not found"
     return data
 
-# Extract the title of the websites
+
+# Extract the title of the website
 def extract_title(data, soup):
     # Extract the title
     title = soup.title.string if soup.title else "Title not found"
     data["title"] = title
 
 
-# Extract the links of the websites
+# Extract the links of the website
 def extract_links(data, soup):
     links = []
     for link in soup.find_all("a"):
@@ -125,6 +126,7 @@ def extract_favicon(data, url):
     favicon_hash = hashlib.md5(
         favicon.content).hexdigest() if favicon.status_code == 200 else "Favicon not found"
     data["favicon_hash"] = favicon_hash
+
 
 @app.task
 def append_to_list(result_list, result):
